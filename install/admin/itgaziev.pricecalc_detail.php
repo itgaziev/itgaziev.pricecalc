@@ -1,0 +1,1 @@
+<?php require $_SERVER['DOCUMENT_ROOT'] . '/local/modules/itgaziev.pricecalc/admin/detail_price.php';

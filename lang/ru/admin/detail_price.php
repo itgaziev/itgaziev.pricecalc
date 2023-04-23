@@ -1,0 +1,12 @@
+<?php
+$MESS['ITGAZIEV_PRICECALC_TAB'] = 'Параметры';
+$MESS['ITGAZIEV_PRICECALC_TAB_TITLE'] = 'Параметры';
+$MESS['ITGAZIEV_PRICECALC_TITLE_HEAD'] = 'Изменить правило #ID#';
+$MESS['ITGAZIEV_PRICECALC_CREATE_TITLE_HEAD'] = 'Создать новое правило';
+$MESS['ITGAZIEV_PRIECALC_BACK'] = 'Вернуться';
+$MESS['ITGAZIEV_PRIECALC_BACK_TITLE'] = 'Вернуться';
+$MESS['ITGAZIEV_PRICECALC_ADD'] = 'Добавить';
+$MESS['ITGAZIEV_PRICECALC_DELETE'] = 'Удалить';
+$MESS['ITGAZIEV_PRICECALC_DELETE_TITLE'] = 'Удалить';
+$MESS['ITGAZIEV_PRICECALC_DELETE_CONF'] = 'Вы уверены что хотите удалить?';
+$MESS['ITGAZIEV_PRICECALC_SAVED'] = 'Успешно сохранено';
