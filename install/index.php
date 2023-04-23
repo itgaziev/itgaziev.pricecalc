@@ -51,12 +51,10 @@ class ITGaziev_PriceCalc extends CModule {
     }
 
     function InstallEvents() {
-
     }
 
     function UnInstallEvents() {
-
-    }
+   }
 
     function InstallFiles() {
         CopyDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/admin', true, true);
@@ -119,10 +117,10 @@ class ITGaziev_PriceCalc extends CModule {
         return [
             'reference_id' => ['D', 'K', 'S', 'W'],
             'reference' => [
-                '[D]' . '',
-                '[K]' . '',
-                '[S]' . '',
-                '[W]' . ''
+                '[D]' . Loc::getMessage('ITGAZIEV_DENIED'),
+                '[K]' . Loc::getMessage('ITGAZIEV_READ_COMPONENT'),
+                '[S]' . Loc::getMessage("ITGAZIEV_WRITE_SETTINGS"),
+                '[W]' . Loc::getMessage("ITGAZIEV_FULL")
             ]
         ];
     }

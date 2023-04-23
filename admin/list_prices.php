@@ -19,7 +19,7 @@ $POST_RIGHT = $APPLICATION->GetGroupRight($module_id);
 
 if ($POST_RIGHT == 'D') $APPLICATION->AuthForm(Loc::getMessage('ACCESS_DENIED'));
 
-$sTableID = Base::getInstance('\ITGaziev\PriceCalc\Table\PriceCalcTable')->getDBTableName();
+$sTableID = Base::getInstance('\ITGaziev\PriceCalc\PriceCalcTable')->getDBTableName();
 $oSort = new CAdminSorting($sTableID, 'ID', 'desc');
 $lAdmin = new CAdminList($sTableID, $oSort);
 
@@ -31,7 +31,14 @@ function CheckFilter() {
     return count($lAdmin->arFilterErrors) == 0;
 }
 
-$FilterArr->InitFilter($FilterArr);
+$FilterArr = array(
+    'find',
+    'find_type',
+    'find_id',
+    'find_name'
+);
+
+$lAdmin->InitFilter($FilterArr);
 
 if (CheckFilter()) {
     $arFilter = [
@@ -51,7 +58,7 @@ if ($lAdmin->EditAction() && $POST_RIGHT == 'W') {
         if ($ID > 0) {
             foreach ($arFields as $key => $value) $arData[$key] = $value;
 
-            $result = PriceCalc\Table\PriceCalcTable::update($ID, $arData);
+            $result = PriceCalc\PriceCalcTable::update($ID, $arData);
 
             if (!$result->isSuccess()) {
                 $lAdmin->AddGroupError(Loc::getMessage('ITGAZIEV_PRICECALC_SAVE_ERROR'), $ID);
@@ -64,7 +71,7 @@ if ($lAdmin->EditAction() && $POST_RIGHT == 'W') {
 
 if (($arID = $lAdmin->GroupAction()) && $POST_RIGHT == 'W') {
     if ($_REQUEST['action_target'] == 'selected') {
-        $rsData = PriceCalc\Table\PriceCalcTable::getList([
+        $rsData = PriceCalc\PriceCalcTable::getList([
             'select' => ['ID', 'NAME', 'PRICE_TYPE', 'BASE_PRICE_TYPE'],
             'filter' => $arFilter,
             'order' => [$by => $order]
@@ -80,7 +87,7 @@ if (($arID = $lAdmin->GroupAction()) && $POST_RIGHT == 'W') {
 
         switch ($_REQUEST['action']) {
             case 'delete':
-                $result = PriceCalc\Table\PriceCalcTable::delete($ID);
+                $result = PriceCalc\PriceCalcTable::delete($ID);
                 if (!$result->isSuccess()) $lAdmin->AddGroupError(Loc::getMessage('ITGAZIEV_PRICECALC_DELETE_ERROR'), $ID);
 
                 break;
@@ -88,8 +95,8 @@ if (($arID = $lAdmin->GroupAction()) && $POST_RIGHT == 'W') {
     }
 }
 
-$rsData = PriceCalc\Table\PriceCalcTable::getList([
-    'select' => ['ID', 'NAME', 'PRICE_TYPE', 'BASE_PRICE_TYPE'],
+$rsData = PriceCalc\PriceCalcTable::getList([
+    'select' => ['ID', 'ACTIVE', 'NAME', 'PRICE_TYPE', 'BASE_PRICE_TYPE'],
     'filter' => $arFilter,
     'order' => [$by => $order]
 ]);
@@ -140,8 +147,12 @@ $lAdmin->AddHeaders(array(
 
 while ($arRes = $rsData->NavNext(true, 'f_')) {
     $row =& $lAdmin->AddRow($f_ID, $arRes);
-
+    $ACTIVE = ($arRes['ACTIVE'] == 'Y') ? 'Да' : 'Нет';
+    $row->AddViewField('ID', '<a href="itgaziev.pricecalc_detail.php?ID=' . $f_ID . '&lang=' . LANG . '">' . $f_ID . '</a>');
     $row->AddViewField('NAME', '<a href="itgaziev.pricecalc_detail.php?ID=' . $f_ID . '&lang=' . LANG . '">' . $f_NAME . '</a>');
+    $row->AddViewField('ACTIVE', $ACTIVE);
+    $row->AddViewField('PRICE_TYPE', '<a target="blank" href="cat_group_edit.php?ID=' . $arRes['PRICE_TYPE'] . '&lang=' . LANG . '">' . PriceCalc\Main::getPriceName($arRes['PRICE_TYPE']) . '</a>');
+    $row->AddViewField('BASE_PRICE_TYPE', '<a target="blank" href="cat_group_edit.php?ID=' . $arRes['BASE_PRICE_TYPE'] . '&lang=' . LANG . '">' . PriceCalc\Main::getPriceName($arRes['BASE_PRICE_TYPE']) . '</a>');
     $row->AddViewField('RUN_PROCESS', '<a class="adm-btn adm-btn-save" href="itgaziev.pricecalc_process.php?ID=' . $f_ID . '&lang=' . LANG . '">' . Loc::getMessage('ITGAZIEV_PRICECALC_TABLE_RUN_PROCESS') . '</a>');
 
     $arActions = [];
@@ -150,7 +161,7 @@ while ($arRes = $rsData->NavNext(true, 'f_')) {
         'ICON' => 'edit',
         'DEFAULT' => true,
         'TEXT' => Loc::getMessage('ITGAZIEV_PRICECALC_EDIT_BTN'),
-        'ACTION' => $lAdmin->ActionRedirect('itgaziev.pricecalc_detail.php>ID=' . $f_ID . '&lang=' . LANG)
+        'ACTION' => $lAdmin->ActionRedirect('itgaziev.pricecalc_detail.php?ID=' . $f_ID . '&lang=' . LANG)
     ];
 
     if ($POST_RIGHT >= 'W') {
@@ -180,7 +191,7 @@ $aContext = [[
     'ICON' => 'btn_new'
 ]];
 
-$lAdmin->AddAminContextMenu($aContext);
+$lAdmin->AddAdminContextMenu($aContext);
 
 $lAdmin->CheckListMode();
 

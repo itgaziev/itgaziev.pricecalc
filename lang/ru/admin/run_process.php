@@ -1,0 +1,6 @@
+<?php
+$MESS['ITGAZIEV_PRICECALC_TAB'] = 'Обновление';
+$MESS['ITGAZIEV_PRICECALC_TAB_TITLE'] = 'Обновить цены';
+$MESS['ITGAZIEV_PRICECALC_BACK'] = 'Вернуться';
+$MESS['ITGAZIEV_PRICECALC_BACK_TITLE'] = 'Вернуться';
+$MESS['ITGAZIEV_PRICECALC_CANCEL'] = 'Отмена';

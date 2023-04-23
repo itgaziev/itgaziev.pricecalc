@@ -34,15 +34,15 @@ $POST_RIGHT = $APPLICATION->GetGroupRight('itgaziev.pricecalc');
 if ($POST_RIGHT == 'D') $APPLICATION->AuthForm(Loc::getMessage('ACCESS_DENIED'));
 
 $aTabs = [[
-        'DIV' => 'edit0',
-        'TAB' => Loc::getMessage('ITGAZIEV_PRICECALC_TAB0'),
+        'DIV' => 'edit',
+        'TAB' => Loc::getMessage('ITGAZIEV_PRICECALC_TAB'),
         'ICON' => 'main_user_edit',
-        'TITLE' => Loc::getMessage('ITGAZIEV_PRICECALC_TAB0_TITLE')
+        'TITLE' => Loc::getMessage('ITGAZIEV_PRICECALC_TAB_TITLE')
     ]
 ];
 
 if ($ID > 0) {
-    $result = YaStock\Table\ITGazievYaOAuthTable::getById($ID);
+    $result = PriceCalc\PriceCalcTable::getById($ID);
     $condition = $result->fetch();
     if ($condition['PARAMETERS']) 
         $condition['PARAMETERS'] = unserialize($condition['PARAMETERS']);
@@ -51,6 +51,7 @@ if ($ID > 0) {
 $tabControl = new CAdminTabControl('tabControl', $aTabs, false);
 
 if ($REQUEST_METHOD == 'POST' && $POST_RIGHT == 'W' && check_bitrix_sessid()) {
+
     $arFields = [
         'ACTIVE' => $_POST['ACTIVE'],
         'NAME' => $_POST['NAME'],
@@ -61,7 +62,7 @@ if ($REQUEST_METHOD == 'POST' && $POST_RIGHT == 'W' && check_bitrix_sessid()) {
     if ($ID > 0) {
         $arFields['PARAMETERS'] = serialize($_POST['PARAMETERS']);
 
-        $result = PriceCalc\Table\PriceCalcTable::update($ID, $arFields);
+        $result = PriceCalc\PriceCalcTable::update($ID, $arFields);
 
         if ($result->isSuccess()) {
             $res = true;
@@ -70,12 +71,15 @@ if ($REQUEST_METHOD == 'POST' && $POST_RIGHT == 'W' && check_bitrix_sessid()) {
             $res = false;
         }
     } else {
-        $result = PriceCalc\Table\PriceCalcTable::add($arFields);
+        $arFields['PARAMETERS'] = serialize($_POST['PARAMETERS']);
+        $arFields['TIME_CREATE'] = new \Bitrix\Main\Type\DateTime();
+        $result = PriceCalc\PriceCalcTable::add($arFields);
         if ($result->isSuccess()) {
             $ID = $result->getID();
             $res = true;
         } else {
             $errors = $result->getErrorMessages();
+
             $res = false;
         }
     }
@@ -134,7 +138,65 @@ if($ID > 0) {
 
 ?>
 <form method="post" action="<?= $APPLICATION->GetCurPage() ?>?lang=<?=LANG?>" enctype="multipart/form-data" name="post_form">
+<?php
+echo bitrix_sessid_post();
+$tabControl->Begin();
+$tabControl->BeginNextTab();
 
+PriceCalc\Main::getListPrices();
+?>
+<tr>
+    <td>Активный</td>
+    <td>
+        <input type="checkbox" name="ACTIVE" value="Y" <?=$condition['ACTIVE'] ? ($condition['ACTIVE'] == "Y" ? "checked" : "") : "checked"?>>
+    </td>
+</tr>
+<? if($ID > 0): ?>
+    <tr>
+        <td width="40%">ID:</td>
+        <td width="60%">
+            <span><?= $ID ?></span>
+            <input type="hidden" name="ID" value="<?= $ID ?>"/>
+        </td>
+    </tr>
+<? endif; ?>
+<tr>
+    <td width="40%"><span class="required">*</span>Название</td>
+    <td width="60%"><input type="text" name="NAME" value="<?= $condition['NAME'] ?>" size="44" maxlength="255" /></td>
+</tr>
+<tr>
+    <td width="40%"><span class="required">*</span>Тип Цены</td>
+    <td>
+        <?= SelectBoxFromArray('PRICE_TYPE', PriceCalc\Main::getListPrices(), $condition['PRICE_TYPE'], '', 'style="min-width: 350px; margin-right: 5px;"', false, ''); ?>
+    </td>
+</tr>
+<tr>
+    <td width="40%"><span class="required">*</span>Базовый тип Цены</td>
+    <td>
+        <?= SelectBoxFromArray('BASE_PRICE_TYPE', PriceCalc\Main::getListPrices(), $condition['BASE_PRICE_TYPE'], '', 'style="min-width: 350px; margin-right: 5px;"', false, ''); ?>
+    </td>
+</tr>
+<tr>
+    <td width="40%"><span class="required">*</span>Тип наценки</td>
+    <td>
+        <?= SelectBoxFromArray('PARAMETERS[TYPE_RULE]', PriceCalc\Main::getTypeRule(), $condition['PARAMETERS']['TYPE_RULE'], '', 'style="min-width: 350px; margin-right: 5px;"', false, ''); ?>
+    </td>
+</tr>
+<tr>
+    <td width="40%"><span class="required">*</span>Число</td>
+    <td width="60%"><input type="text" name="PARAMETERS[NUMBER]" value="<?= $condition['PARAMETERS']['NUMBER'] ?>" size="44" maxlength="255" /></td>
+</tr>
+<?
+$tabControl->Buttons(
+    array(
+      "disabled"=>($POST_RIGHT<"W"),
+      "back_url"=>"itgaziev.pricecalc_list.php?lang=".LANG,
+      
+    )
+);
+
+$tabControl->End();
+?>
 </form>
 <?php
 

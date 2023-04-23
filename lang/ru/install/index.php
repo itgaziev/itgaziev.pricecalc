@@ -1,0 +1,12 @@
+<?php
+$MESS['ITGAZIEV_PRICECALC_MODULE_NAME'] = 'Наценки';
+$MESS['ITGAZIEV_PRICECALC_MODULE_DESCRIPTION'] = 'Автоматическое установка наценки';
+$MESS['ITGAZIEV_PRICECALC_PARTNER_NAME'] = 'ITGaziev';
+$MESS['ITGAZIEV_PRICECALC_PARTNER_URI'] = 'https://it-gaziev.ru';
+$MESS['ITGAZIEV_PRICECALC_INSTALL_ERROR_VERSION'] = 'Ваше версия битрикс низкая';
+$MESS['ITGAZIEV_PRICECALC_INSTALL_TITLE'] = 'Установка';
+$MESS['ITGAZIEV_PRICECALC_UNINSTALL_TITLE'] = 'Удаления';
+$MESS['ITGAZIEV_DENIED'] = 'Запрещено';
+$MESS['ITGAZIEV_READ_COMPONENT'] = 'Чтения';
+$MESS['ITGAZIEV_WRITE_SETTINGS'] = 'Изменения';
+$MESS['ITGAZIEV_FULL'] = 'Полный доступ';
